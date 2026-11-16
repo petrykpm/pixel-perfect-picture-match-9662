@@ -1,0 +1,254 @@
+[
+  {
+    "id": "CHARMED",
+    "nome": "Charmed"
+  },
+  {
+    "id": "ENCHANTED",
+    "nome": "Enchanted"
+  },
+  {
+    "id": "BLESSED",
+    "nome": "Blessed"
+  },
+  {
+    "id": "PROTECTED",
+    "nome": "Protected"
+  },
+  {
+    "id": "MASKED",
+    "nome": "Masked"
+  },
+  {
+    "id": "SOULFUL",
+    "nome": "Soulful"
+  },
+  {
+    "id": "WORLDSOUL",
+    "nome": "Worldsoul"
+  },
+  {
+    "id": "FK_DEFEAT",
+    "nome": "Falsehood"
+  },
+  {
+    "id": "DREAM_FK",
+    "nome": "Strength"
+  },
+  {
+    "id": "HORNET_1",
+    "nome": "Test of Resolve"
+  },
+  {
+    "id": "HORNET_2",
+    "nome": "Proof of Resolve"
+  },
+  {
+    "id": "SOUL_MASTER_DEFEAT",
+    "nome": "Illumination"
+  },
+  {
+    "id": "BROKEN_VESSEL",
+    "nome": "Release"
+  },
+  {
+    "id": "DREAM_BROKEN_VESSEL",
+    "nome": "Peace"
+  },
+  {
+    "id": "DUNG_DEFENDER",
+    "nome": "Honour"
+  },
+  {
+    "id": "MANTIS_LORDS",
+    "nome": "Respect"
+  },
+  {
+    "id": "COLLECTOR",
+    "nome": "Obsession"
+  },
+  {
+    "id": "ZOTE",
+    "nome": "Rivalry"
+  },
+  {
+    "id": "ATTUNEMENT",
+    "nome": "Attunement"
+  },
+  {
+    "id": "AWAKENING",
+    "nome": "Awakening"
+  },
+  {
+    "id": "ASCENSION",
+    "nome": "Ascension"
+  },
+  {
+    "id": "GRUBFRIEND",
+    "nome": "Grubfriend"
+  },
+  {
+    "id": "METAMORPHOSIS",
+    "nome": "Metamorphosis"
+  },
+  {
+    "id": "NEGLECT",
+    "nome": "Neglect"
+  },
+  {
+    "id": "NAILSMITH_KILL",
+    "nome": "Purity"
+  },
+  {
+    "id": "NAILSMITH_SPARE",
+    "nome": "Happy Couple"
+  },
+  {
+    "id": "QUIRREL_EPILOGUE",
+    "nome": "Witness"
+  },
+  {
+    "id": "MOURNER",
+    "nome": "Solace"
+  },
+  {
+    "id": "TRAITOR_LORD",
+    "nome": "Execution"
+  },
+  {
+    "id": "STAG_STATION_HALF",
+    "nome": "Connection"
+  },
+  {
+    "id": "STAG_STATION_ALL",
+    "nome": "Hope"
+  },
+  {
+    "id": "TEACHER",
+    "nome": "Teacher"
+  },
+  {
+    "id": "WATCHER",
+    "nome": "Watcher"
+  },
+  {
+    "id": "BEAST",
+    "nome": "Beast"
+  },
+  {
+    "id": "MAP",
+    "nome": "Cartographer"
+  },
+  {
+    "id": "COLOSSEUM_1",
+    "nome": "Warrior"
+  },
+  {
+    "id": "COLOSSEUM_2",
+    "nome": "Conqueror"
+  },
+  {
+    "id": "COLOSSEUM_3",
+    "nome": "Fool"
+  },
+  {
+    "id": "ENDING_A",
+    "nome": "The Hollow Knight"
+  },
+  {
+    "id": "ENDING_B",
+    "nome": "Sealed Siblings"
+  },
+  {
+    "id": "ENDING_C",
+    "nome": "Dream No More"
+  },
+  {
+    "id": "VOID",
+    "nome": "Void"
+  },
+  {
+    "id": "SPEEDRUN_1",
+    "nome": "Speedrun 1"
+  },
+  {
+    "id": "SPEEDRUN_2",
+    "nome": "Speedrun 2"
+  },
+  {
+    "id": "COMPLETION",
+    "nome": "Completion"
+  },
+  {
+    "id": "SPEED_COMPLETION",
+    "nome": "Speed Completion"
+  },
+  {
+    "id": "STEELSOUL",
+    "nome": "Steel Soul"
+  },
+  {
+    "id": "STEELSOUL_COMPLETION",
+    "nome": "Steel Heart"
+  },
+  {
+    "id": "HUNTER_1",
+    "nome": "Keen Hunter"
+  },
+  {
+    "id": "HUNTER_2",
+    "nome": "True Hunter"
+  },
+  {
+    "id": "MR_MUSHROOM",
+    "nome": "Passing of the Age"
+  },
+  {
+    "id": "DREAM_SOUL_MASTER_DEFEAT",
+    "nome": "Mortality"
+  },
+  {
+    "id": "WHITE_DEFENDER",
+    "nome": "Memory"
+  },
+  {
+    "id": "GREY_PRINCE",
+    "nome": "Dark Romance"
+  },
+  {
+    "id": "GRIMM",
+    "nome": "Grand Performance"
+  },
+  {
+    "id": "NIGHTMARE_GRIMM",
+    "nome": "Ritual"
+  },
+  {
+    "id": "BANISHMENT",
+    "nome": "Banishment"
+  },
+  {
+    "id": "PANTHEON1",
+    "nome": "Brotherhood"
+  },
+  {
+    "id": "PANTHEON2",
+    "nome": "Inspiration"
+  },
+  {
+    "id": "PANTHEON3",
+    "nome": "Focus"
+  },
+  {
+    "id": "PANTHEON4",
+    "nome": "Soul & Shade"
+  },
+  {
+    "id": "ENDINGD",
+    "nome": "Embrace the Void"
+  },
+  {
+    "id": "COMPLETIONGG",
+    "nome": "Pure Completion"
+  }
+]

@@ -1,0 +1,4 @@
+export function hours(seconds: number): string { return `${(seconds / 3600).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}h`; }
+export function percent(elapsed: number, total: number): number { return total > 0 ? Math.min(100, Math.floor((elapsed / total) * 100)) : 0; }
+export function minutes(value?: number): string { return value === undefined ? "—" : `${Math.max(0, Math.ceil(value))} min`; }
+export function timeAgo(value: string): string { const difference = Math.max(0, Math.floor((Date.now() - Date.parse(value)) / 60000)); return difference < 1 ? "Agora" : difference < 60 ? `Há ${difference} min` : `Há ${Math.floor(difference / 60)}h`; }

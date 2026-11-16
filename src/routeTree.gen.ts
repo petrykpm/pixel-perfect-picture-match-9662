@@ -10,33 +10,102 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AtividadeRouteImport } from './routes/atividade'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as GabaritosRouteImport } from './routes/gabaritos'
+import { Route as GabaritoAppidRouteImport } from './routes/gabarito.$appid'
+import { Route as JogoAppidRouteImport } from './routes/jogo.$appid'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AtividadeRoute = AtividadeRouteImport.update({
+  id: '/atividade',
+  path: '/atividade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GabaritosRoute = GabaritosRouteImport.update({
+  id: '/gabaritos',
+  path: '/gabaritos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GabaritoAppidRoute = GabaritoAppidRouteImport.update({
+  id: '/gabarito/$appid',
+  path: '/gabarito/$appid',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JogoAppidRoute = JogoAppidRouteImport.update({
+  id: '/jogo/$appid',
+  path: '/jogo/$appid',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/atividade': typeof AtividadeRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/gabaritos': typeof GabaritosRoute
+  '/gabarito/$appid': typeof GabaritoAppidRoute
+  '/jogo/$appid': typeof JogoAppidRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/atividade': typeof AtividadeRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/gabaritos': typeof GabaritosRoute
+  '/gabarito/$appid': typeof GabaritoAppidRoute
+  '/jogo/$appid': typeof JogoAppidRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/atividade': typeof AtividadeRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/gabaritos': typeof GabaritosRoute
+  '/gabarito/$appid': typeof GabaritoAppidRoute
+  '/jogo/$appid': typeof JogoAppidRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/atividade'
+    | '/configuracoes'
+    | '/gabaritos'
+    | '/gabarito/$appid'
+    | '/jogo/$appid'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/atividade'
+    | '/configuracoes'
+    | '/gabaritos'
+    | '/gabarito/$appid'
+    | '/jogo/$appid'
+  id:
+    | '__root__'
+    | '/'
+    | '/atividade'
+    | '/configuracoes'
+    | '/gabaritos'
+    | '/gabarito/$appid'
+    | '/jogo/$appid'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AtividadeRoute: typeof AtividadeRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  GabaritosRoute: typeof GabaritosRoute
+  GabaritoAppidRoute: typeof GabaritoAppidRoute
+  JogoAppidRoute: typeof JogoAppidRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +117,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/atividade': {
+      id: '/atividade'
+      path: '/atividade'
+      fullPath: '/atividade'
+      preLoaderRoute: typeof AtividadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gabaritos': {
+      id: '/gabaritos'
+      path: '/gabaritos'
+      fullPath: '/gabaritos'
+      preLoaderRoute: typeof GabaritosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gabarito/$appid': {
+      id: '/gabarito/$appid'
+      path: '/gabarito/$appid'
+      fullPath: '/gabarito/$appid'
+      preLoaderRoute: typeof GabaritoAppidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jogo/$appid': {
+      id: '/jogo/$appid'
+      path: '/jogo/$appid'
+      fullPath: '/jogo/$appid'
+      preLoaderRoute: typeof JogoAppidRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AtividadeRoute: AtividadeRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
+  GabaritosRoute: GabaritosRoute,
+  GabaritoAppidRoute: GabaritoAppidRoute,
+  JogoAppidRoute: JogoAppidRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
