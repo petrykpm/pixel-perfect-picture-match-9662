@@ -1,0 +1,386 @@
+{
+ "appid": 367520,
+ "nome": "Hollow Knight",
+ "horas_sugeridas": 85,
+ "obs": "Ordem de progressão pesquisada (guias + % global). pos = fração do plano (0..1).",
+ "conquistas": [
+  {
+   "id": "CHARMED",
+   "nome": "Charmed",
+   "pos": 0.0,
+   "descricao": "Acquire your first Charm"
+  },
+  {
+   "id": "FK_DEFEAT",
+   "nome": "Falsehood",
+   "pos": 0.01,
+   "descricao": "Defeat the False Knight"
+  },
+  {
+   "id": "HORNET_1",
+   "nome": "Test of Resolve",
+   "pos": 0.02,
+   "descricao": "Defeat Hornet in Greenpath"
+  },
+  {
+   "id": "PROTECTED",
+   "nome": "Protected",
+   "pos": 0.033,
+   "descricao": "Acquire 4 Mask Shards"
+  },
+  {
+   "id": "STAG_STATION_HALF",
+   "nome": "Connection",
+   "pos": 0.061,
+   "descricao": "Open half of Hallownest's Stag Stations"
+  },
+  {
+   "id": "SOULFUL",
+   "nome": "Soulful",
+   "pos": 0.065,
+   "descricao": "Acquire 3 Vessel Fragments"
+  },
+  {
+   "id": "SOUL_MASTER_DEFEAT",
+   "nome": "Illumination",
+   "pos": 0.067,
+   "descricao": "Defeat the Soul Master"
+  },
+  {
+   "id": "MANTIS_LORDS",
+   "nome": "Respect",
+   "pos": 0.068,
+   "descricao": "Defeat the Mantis Lords"
+  },
+  {
+   "id": "GRUBFRIEND",
+   "nome": "Grubfriend",
+   "pos": 0.076,
+   "descricao": "Rescue half of the imprisoned grubs"
+  },
+  {
+   "id": "DUNG_DEFENDER",
+   "nome": "Honour",
+   "pos": 0.082,
+   "descricao": "Defeat the Dung Defender"
+  },
+  {
+   "id": "ENCHANTED",
+   "nome": "Enchanted",
+   "pos": 0.102,
+   "descricao": "Acquire half of Hallownest's Charms"
+  },
+  {
+   "id": "BROKEN_VESSEL",
+   "nome": "Release",
+   "pos": 0.161,
+   "descricao": "Defeat the Broken Vessel"
+  },
+  {
+   "id": "ATTUNEMENT",
+   "nome": "Attunement",
+   "pos": 0.178,
+   "descricao": "Collect 600 Essence"
+  },
+  {
+   "id": "COLOSSEUM_1",
+   "nome": "Warrior",
+   "pos": 0.189,
+   "descricao": "Complete the Trial of the Warrior"
+  },
+  {
+   "id": "TEACHER",
+   "nome": "Teacher",
+   "pos": 0.194,
+   "descricao": "Destroy Monomon the Teacher"
+  },
+  {
+   "id": "BEAST",
+   "nome": "Beast",
+   "pos": 0.195,
+   "descricao": "Destroy Herrah the Beast"
+  },
+  {
+   "id": "WATCHER",
+   "nome": "Watcher",
+   "pos": 0.218,
+   "descricao": "Destroy Lurien the Watcher"
+  },
+  {
+   "id": "HORNET_2",
+   "nome": "Proof of Resolve",
+   "pos": 0.224,
+   "descricao": "Defeat Hornet in Kingdom's Edge"
+  },
+  {
+   "id": "MAP",
+   "nome": "Cartographer",
+   "pos": 0.245,
+   "descricao": "Acquire a map of each area"
+  },
+  {
+   "id": "TRAITOR_LORD",
+   "nome": "Execution",
+   "pos": 0.253,
+   "descricao": "Defeat the Traitor Lord"
+  },
+  {
+   "id": "COLLECTOR",
+   "nome": "Obsession",
+   "pos": 0.254,
+   "descricao": "Defeat the Collector"
+  },
+  {
+   "id": "STAG_STATION_ALL",
+   "nome": "Hope",
+   "pos": 0.256,
+   "descricao": "Open all of Hallownest's Stag Stations and discover the Stag Nest"
+  },
+  {
+   "id": "COLOSSEUM_2",
+   "nome": "Conqueror",
+   "pos": 0.258,
+   "descricao": "Complete the Trial of the Conqueror"
+  },
+  {
+   "id": "AWAKENING",
+   "nome": "Awakening",
+   "pos": 0.269,
+   "descricao": "Collect 1800 Essence and awaken the Dream Nail"
+  },
+  {
+   "id": "DREAM_BROKEN_VESSEL",
+   "nome": "Peace",
+   "pos": 0.293,
+   "descricao": "Defeat the Lost Kin"
+  },
+  {
+   "id": "DREAM_FK",
+   "nome": "Strength",
+   "pos": 0.316,
+   "descricao": "Defeat the Failed Champion"
+  },
+  {
+   "id": "DREAM_SOUL_MASTER_DEFEAT",
+   "nome": "Mortality",
+   "pos": 0.338,
+   "descricao": "Defeat the Soul Tyrant"
+  },
+  {
+   "id": "ZOTE",
+   "nome": "Rivalry",
+   "pos": 0.346,
+   "descricao": "Defeat Zote in the Colosseum of Fools"
+  },
+  {
+   "id": "NEGLECT",
+   "nome": "Neglect",
+   "pos": 0.373,
+   "descricao": "Leave Zote to die"
+  },
+  {
+   "id": "MASKED",
+   "nome": "Masked",
+   "pos": 0.376,
+   "descricao": "Acquire all Mask Shards"
+  },
+  {
+   "id": "METAMORPHOSIS",
+   "nome": "Metamorphosis",
+   "pos": 0.385,
+   "descricao": "Rescue all of the imprisoned grubs"
+  },
+  {
+   "id": "WORLDSOUL",
+   "nome": "Worldsoul",
+   "pos": 0.388,
+   "descricao": "Acquire all Vessel Fragments"
+  },
+  {
+   "id": "BLESSED",
+   "nome": "Blessed",
+   "pos": 0.394,
+   "descricao": "Acquire all Charms and receive Salubra's blessing"
+  },
+  {
+   "id": "ASCENSION",
+   "nome": "Ascension",
+   "pos": 0.412,
+   "descricao": "Collect 2400 Essence and hear the Seer's final words"
+  },
+  {
+   "id": "MOURNER",
+   "nome": "Solace",
+   "pos": 0.428,
+   "descricao": "Bring peace to the Grey Mourner"
+  },
+  {
+   "id": "WHITE_DEFENDER",
+   "nome": "Memory",
+   "pos": 0.432,
+   "descricao": "Defeat White Defender"
+  },
+  {
+   "id": "NAILSMITH_KILL",
+   "nome": "Purity",
+   "pos": 0.439,
+   "descricao": "Slay the Nailsmith with the Pure Nail"
+  },
+  {
+   "id": "NAILSMITH_SPARE",
+   "nome": "Happy Couple",
+   "pos": 0.44,
+   "descricao": "Allow the Nailsmith to find a new calling"
+  },
+  {
+   "id": "QUIRREL_EPILOGUE",
+   "nome": "Witness",
+   "pos": 0.453,
+   "descricao": "Spend a final moment with Quirrel"
+  },
+  {
+   "id": "ENDING_A",
+   "nome": "The Hollow Knight",
+   "pos": 0.486,
+   "descricao": "Defeat the Hollow Knight and become the Vessel"
+  },
+  {
+   "id": "VOID",
+   "nome": "Void",
+   "pos": 0.488,
+   "descricao": "Remember the past and unite the Abyss"
+  },
+  {
+   "id": "ENDING_B",
+   "nome": "Sealed Siblings",
+   "pos": 0.499,
+   "descricao": "Defeat the Hollow Knight with Hornet by your side"
+  },
+  {
+   "id": "ENDING_C",
+   "nome": "Dream No More",
+   "pos": 0.511,
+   "descricao": "Defeat the Radiance and consume the light"
+  },
+  {
+   "id": "GRIMM",
+   "nome": "Grand Performance",
+   "pos": 0.538,
+   "descricao": "Defeat Troupe Leader Grimm"
+  },
+  {
+   "id": "BANISHMENT",
+   "nome": "Banishment",
+   "pos": 0.542,
+   "descricao": "Banish the Grimm Troupe from Hallownest"
+  },
+  {
+   "id": "NIGHTMARE_GRIMM",
+   "nome": "Ritual",
+   "pos": 0.547,
+   "descricao": "Defeat the Nightmare King and complete the Ritual"
+  },
+  {
+   "id": "GREY_PRINCE",
+   "nome": "Dark Romance",
+   "pos": 0.585,
+   "descricao": "Defeat Grey Prince Zote"
+  },
+  {
+   "id": "COLOSSEUM_3",
+   "nome": "Fool",
+   "pos": 0.586,
+   "descricao": "Complete the Trial of the Fool"
+  },
+  {
+   "id": "HUNTER_1",
+   "nome": "Keen Hunter",
+   "pos": 0.619,
+   "descricao": "Record all of Hallownest's creatures in the Hunter's Journal"
+  },
+  {
+   "id": "HUNTER_2",
+   "nome": "True Hunter",
+   "pos": 0.644,
+   "descricao": "Receive the Hunter's Mark"
+  },
+  {
+   "id": "MR_MUSHROOM",
+   "nome": "Passing of the Age",
+   "pos": 0.68,
+   "descricao": "Aid the Herald in moving on"
+  },
+  {
+   "id": "COMPLETION",
+   "nome": "Completion",
+   "pos": 0.685,
+   "descricao": "Achieve 100% game completion and finish the game"
+  },
+  {
+   "id": "PANTHEON1",
+   "nome": "Brotherhood",
+   "pos": 0.699,
+   "descricao": "Complete the Pantheon of the Master"
+  },
+  {
+   "id": "PANTHEON2",
+   "nome": "Inspiration",
+   "pos": 0.719,
+   "descricao": "Complete the Pantheon of the Painter"
+  },
+  {
+   "id": "PANTHEON3",
+   "nome": "Focus",
+   "pos": 0.721,
+   "descricao": "Complete the Pantheon of the Sage"
+  },
+  {
+   "id": "PANTHEON4",
+   "nome": "Soul & Shade",
+   "pos": 0.815,
+   "descricao": "Complete the Pantheon of the Knight"
+  },
+  {
+   "id": "ENDINGD",
+   "nome": "Embrace the Void",
+   "pos": 0.844,
+   "descricao": "Ascend the Pantheon of Hallownest and take your place at its peak"
+  },
+  {
+   "id": "COMPLETIONGG",
+   "nome": "Pure Completion",
+   "pos": 0.86,
+   "descricao": "Achieve 112% game completion and finish the game."
+  },
+  {
+   "id": "SPEEDRUN_1",
+   "nome": "Speedrun 1",
+   "pos": 0.898,
+   "descricao": "Complete the game in under 10 hours"
+  },
+  {
+   "id": "SPEED_COMPLETION",
+   "nome": "Speed Completion",
+   "pos": 0.912,
+   "descricao": "Achieve 100% game completion and finish the game in under 20 hours"
+  },
+  {
+   "id": "SPEEDRUN_2",
+   "nome": "Speedrun 2",
+   "pos": 0.944,
+   "descricao": "Complete the game in under 5 hours"
+  },
+  {
+   "id": "STEELSOUL",
+   "nome": "Steel Soul",
+   "pos": 0.956,
+   "descricao": "Finish the game in Steel Soul mode"
+  },
+  {
+   "id": "STEELSOUL_COMPLETION",
+   "nome": "Steel Heart",
+   "pos": 0.968,
+   "descricao": "Achieve 100% game completion and finish the game in Steel Soul mode"
+  }
+ ]
+}

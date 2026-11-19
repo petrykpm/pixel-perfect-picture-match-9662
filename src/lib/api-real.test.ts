@@ -7,7 +7,7 @@ describe("Real local API", () => {
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify([]), { status: 200 })); vi.stubGlobal("fetch", fetcher);
     const api = await import("./api");
     expect(api.USE_MOCK).toBe(false); expect(await api.getGames()).toEqual([]);
-    expect(fetcher.mock.calls[0]?.[0]).toBe("http://localhost:8765/jogos");
+    expect(fetcher.mock.calls[0]?.[0]).toBe(`${window.location.origin}/jogos`);
   });
   it("marks the program disconnected after a network failure", async () => {
     vi.stubEnv("VITE_USE_MOCK", "false"); vi.resetModules(); vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));

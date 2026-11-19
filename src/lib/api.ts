@@ -121,7 +121,9 @@ function scheduled(game: Game, template?: Template): Achievement[] {
 }
 export function getApiUrl(): string {
   if (typeof window === "undefined") return DEFAULT_API_URL;
-  try { return window.localStorage.getItem(URL_KEY) || DEFAULT_API_URL; } catch { return DEFAULT_API_URL; }
+  // Servido pelo próprio programa local: a origem da página já é a API.
+  const origin = !USE_MOCK && /^https?:$/.test(window.location.protocol) ? window.location.origin : DEFAULT_API_URL;
+  try { return window.localStorage.getItem(URL_KEY) || origin; } catch { return origin; }
 }
 export function getLocalSettings(): Settings {
   try { const stored = window.localStorage.getItem(SETTINGS_KEY); return { ...(stored ? JSON.parse(stored) : defaultSettings), api_url: getApiUrl() }; } catch { return { ...defaultSettings, api_url: getApiUrl() }; }
@@ -134,7 +136,11 @@ async function request<T>(path: string, method = "GET", body?: unknown, override
       method, ...(body === undefined ? {} : { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }), signal: AbortSignal.timeout(4000),
     });
     connected = true;
-    if (!response.ok) throw new Error(`O programa local retornou um erro (${response.status}).`);
+    if (!response.ok) {
+      let detail = "";
+      try { const payload = await response.json(); detail = typeof payload?.erro === "string" ? payload.erro : ""; } catch { /* corpo sem JSON */ }
+      throw new Error(detail || `O programa local retornou um erro (${response.status}).`);
+    }
     if (response.status === 204) return undefined as T;
     const text = await response.text();
     return text ? JSON.parse(text) : undefined as T;
