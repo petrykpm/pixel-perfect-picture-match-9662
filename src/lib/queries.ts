@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { getAchievements, getActivity, getGames, getGameLogs, getInstalledGames, getSettings, getTemplate, POLLING_INTERVAL } from "./api";
 
-const live = { refetchInterval: POLLING_INTERVAL, staleTime: 1000, retry: 1, refetchOnWindowFocus: true };
+const live = { refetchInterval: POLLING_INTERVAL, refetchIntervalInBackground: true, staleTime: 1000, retry: 1, refetchOnWindowFocus: true };
 export const gamesQuery = () => queryOptions({ queryKey: ["games"], queryFn: getGames, ...live });
 export const activityQuery = () => queryOptions({ queryKey: ["activity"], queryFn: getActivity, ...live });
 export const achievementsQuery = (appid: string) => queryOptions({ queryKey: ["achievements", appid], queryFn: () => getAchievements(appid), ...live });

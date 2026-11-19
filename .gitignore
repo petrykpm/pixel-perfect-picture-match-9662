@@ -30,3 +30,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+programa/web/
+programa/estado/
+programa/backup/
+programa/config.json
+programa/plano_*.json
+programa/steam_appid.txt
+programa/dist/
+programa/build/
+programa/*.spec
+__pycache__/
