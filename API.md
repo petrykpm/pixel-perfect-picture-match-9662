@@ -24,8 +24,9 @@ Todos retornam JSON, exceto ações que podem retornar `204 No Content`. Corpos 
 | DELETE | `/jogos/{appid}` | — | 204 ou JSON |
 | GET | `/jogos/{appid}/conquistas` | — | `Achievement[]` |
 | GET | `/jogos/{appid}/log` | — | `string[]` |
-| GET | `/instalados` | — | `InstalledGame[]` |
-| POST | `/jogos` | `{ "appid": "367520", "horas": 85 }` | 204 ou JSON |
+| GET | `/instalados` | — | `InstalledGame[]` (instalados e não instalados; campo `instalado`) |
+| GET | `/buscar?q=` | — | `InstalledGame[]` (busca na loja Steam por nome ou AppID) |
+| POST | `/jogos` | `{ "appid": "367520", "horas": 85, "nome": "opcional" }` | 204 ou JSON |
 | GET | `/gabaritos/{appid}` | — | `Template` |
 | PUT | `/gabaritos/{appid}` | `Template` | 204 ou JSON |
 | GET | `/config` | — | `Settings` |

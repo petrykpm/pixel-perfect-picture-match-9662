@@ -3,7 +3,7 @@ import hollowAchievements from "./hollow-achievements.json";
 export type GameState = "rodando" | "pausado" | "parado" | "sessao_concluida" | "concluido" | "gerando_gabarito" | "erro";
 export interface Game { appid: string; nome: string; estado: GameState; erro?: string; elapsed_s: number; total_s: number; restantes: number; total_conquistas: number; proxima?: string | undefined; falta_min?: number | undefined; ultima?: string }
 export interface Achievement { id: string; nome: string; descricao?: string; pos: number; agendada_s?: number; concluida: boolean }
-export interface InstalledGame { appid: string; nome: string; tem_gabarito: boolean }
+export interface InstalledGame { appid: string; nome: string; tem_gabarito: boolean; instalado?: boolean }
 export interface Settings { dll: string; sessao_horas: number; api_url: string }
 export interface Template { appid: string; nome: string; horas_sugeridas: number; conquistas: Pick<Achievement, "id" | "nome" | "pos">[] }
 export interface Activity { id: string; appid: string; jogo: string; mensagem: string; horario: string; tipo: "conquista" | "sessao" | "inicio" }
@@ -157,6 +157,12 @@ async function example<T>(action: (data: MockState) => T): Promise<T> {
 }
 export async function getGames(): Promise<Game[]> { return USE_MOCK ? example((data) => data.games) : request("/jogos"); }
 export async function getInstalledGames(): Promise<InstalledGame[]> { return USE_MOCK ? example((data) => installed.map((game) => ({ ...game, tem_gabarito: !!data.templates[game.appid] }))) : request("/instalados"); }
+export async function searchGames(query: string): Promise<InstalledGame[]> {
+  const term = query.trim();
+  if (term.length < 2) return [];
+  if (USE_MOCK) return example((data) => installed.filter((game) => game.nome.toLocaleLowerCase("pt-BR").includes(term.toLocaleLowerCase("pt-BR")) || game.appid === term).map((game) => ({ ...game, tem_gabarito: !!data.templates[game.appid], instalado: false })));
+  return request(`/buscar?q=${encodeURIComponent(term)}`);
+}
 export async function getAchievements(appid: string): Promise<Achievement[]> {
   return USE_MOCK ? example((data) => { const game = data.games.find((item) => item.appid === appid); if (!game) throw new Error("Jogo não encontrado."); return scheduled(game, data.templates[appid]); }) : request(`/jogos/${encodeURIComponent(appid)}/conquistas`);
 }
@@ -173,7 +179,7 @@ export async function removeGame(appid: string): Promise<void> {
   if (!USE_MOCK) return request(`/jogos/${encodeURIComponent(appid)}`, "DELETE");
   await example((data) => { data.games = data.games.filter((game) => game.appid !== appid); delete data.logs[appid]; return true; });
 }
-export async function addGame(input: { appid: string; horas: number }): Promise<void> {
+export async function addGame(input: { appid: string; horas: number; nome?: string }): Promise<void> {
   if (!Number.isFinite(input.horas) || input.horas <= 0) throw new Error("Informe um total de horas maior que zero.");
   if (!USE_MOCK) return request("/jogos", "POST", input);
   await example((data) => {

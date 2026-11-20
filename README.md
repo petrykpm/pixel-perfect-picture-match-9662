@@ -28,6 +28,14 @@ Seus dados (planos, progresso, configurações, gabaritos) ficam em `%APPDATA%\G
 
 Você pode fechar o navegador: o programa continua rodando até você escolher **Sair** no ícone da bandeja, que pausa tudo e salva o progresso.
 
+### Jogos sem instalar
+
+Você não precisa instalar o jogo. A lista mostra toda a sua biblioteca (marcando os não instalados) e a busca encontra qualquer jogo por nome ou AppID.
+
+- Para listar a biblioteca inteira, deixe **Detalhes dos jogos** como **Público** no perfil da Steam.
+- O programa usa o `steam_api64.dll` da Steam; na primeira vez ele é copiado de qualquer jogo instalado e guardado na pasta de dados.
+- A Steam precisa estar aberta e logada na conta que possui o jogo.
+
 ### Gerar o instalador
 
 - **Pelo GitHub (recomendado):** em **Actions → Instalador Windows → Run workflow**, ou crie uma tag (`git tag v1.0.0 && git push --tags`) e o instalador é anexado à Release.

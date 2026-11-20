@@ -18,12 +18,14 @@ import json
 import os
 import random
 import re
+import shutil
 import signal
 import subprocess
 import sys
 import threading
 import time
 import urllib.parse
+import urllib.request
 import webbrowser
 
 FROZEN = getattr(sys, "frozen", False)
@@ -703,6 +705,71 @@ def indice_gabaritos():
     return ind
 
 
+def _baixar(url, timeout=6, limite=3_000_000):
+    """GET simples em endereços fixos da Steam (loja e comunidade)."""
+    fake = os.environ.get("CONQUISTAS_FAKE_WEB")  # só para testes: {"trecho da url": "resposta"}
+    if fake:
+        for chave, valor in (ler_json(fake, {}) or {}).items():
+            if chave in url:
+                return valor.encode("utf-8")
+        raise OSError("sem rede (teste)")
+    req = urllib.request.Request(url, headers={"User-Agent": "GerenciadorConquistas"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return r.read(limite)
+
+
+def loja_buscar(termo):
+    """Procura jogos na loja da Steam por nome ou AppID (público, sem chave)."""
+    termo = (termo or "").strip()[:80]
+    if not termo:
+        return []
+    try:
+        if termo.isdigit():
+            d = json.loads(_baixar("https://store.steampowered.com/api/appdetails?filters=basic&l=portuguese&appids="
+                                   + termo))
+            info = (d.get(termo) or {})
+            if info.get("success") and (info.get("data") or {}).get("name"):
+                return [{"appid": termo, "nome": info["data"]["name"]}]
+            return []
+        d = json.loads(_baixar("https://store.steampowered.com/api/storesearch/?cc=br&l=portuguese&term="
+                               + urllib.parse.quote(termo)))
+        return [{"appid": str(i["id"]), "nome": i["name"]} for i in d.get("items", [])
+                if i.get("type") == "app" and i.get("id") and i.get("name")][:20]
+    except Exception:
+        raise ApiError(502, "Não consegui falar com a loja da Steam. Verifique a internet e tente de novo.")
+
+
+def steamid_local():
+    """SteamID64 da conta usada por último neste PC (arquivo loginusers.vdf da Steam)."""
+    if os.environ.get("CONQUISTAS_STEAMID"):
+        return os.environ["CONQUISTAS_STEAMID"]
+    achado = None
+    for lib in pastas_steam():
+        try:
+            with open(os.path.join(lib, "config", "loginusers.vdf"), encoding="utf-8", errors="ignore") as f:
+                txt = f.read()
+        except OSError:
+            continue
+        for m in re.finditer(r'"(7656\d{13})"\s*\{(.*?)\}', txt, re.S):
+            if re.search(r'"MostRecent"\s+"1"', m.group(2)):
+                return m.group(1)
+            achado = achado or m.group(1)
+    return achado
+
+
+def biblioteca_publica(steamid):
+    """Jogos da conta pela lista pública do perfil (só funciona com 'Detalhes dos jogos' público)."""
+    import xml.etree.ElementTree as ET
+    xml = _baixar(f"https://steamcommunity.com/profiles/{steamid}/games?xml=1", limite=8_000_000)
+    raiz = ET.fromstring(xml)
+    jogos = []
+    for g in raiz.iter("game"):
+        a, n = g.findtext("appID"), g.findtext("name")
+        if a and a.isdigit() and n:
+            jogos.append((a, n.strip()))
+    return jogos
+
+
 class Manager:
     def __init__(self):
         self.lock = threading.RLock()
@@ -714,8 +781,16 @@ class Manager:
         self.procs = {}
         self._inst = (0.0, [])
         self._dll_auto = None
+        self._conta = (0.0, [])  # (quando, [(appid, nome)]) — lista pública do perfil
+        self._conta_busca = False
         os.makedirs(GAB_DIR, exist_ok=True)
         os.makedirs(EST_DIR, exist_ok=True)
+        d = cfg.get("dll")
+        if d and os.path.isfile(d):  # guarda uma cópia da DLL: o jogo de onde ela veio pode ser desinstalado
+            nova = self._copiar_dll(d)
+            if nova != d:
+                cfg["dll"] = nova
+                self.salvar()
 
     # ---- utilidades ----
     def salvar(self):
@@ -732,6 +807,34 @@ class Manager:
             except Exception:
                 self._inst = (agora, [])
         return self._inst[1]
+
+    def _copiar_dll(self, origem):
+        destino = os.path.join(BASE, "steam", "steam_api64.dll")
+        try:
+            if os.path.abspath(origem).lower() == os.path.abspath(destino).lower():
+                return destino
+            os.makedirs(os.path.dirname(destino), exist_ok=True)
+            shutil.copy2(origem, destino)
+            return destino
+        except OSError:
+            return origem
+
+    def biblioteca_conta(self):
+        """Jogos da conta (perfil público), buscados em segundo plano e guardados por 10 minutos."""
+        if time.time() - self._conta[0] > 600 and not self._conta_busca:
+            self._conta_busca = True
+
+            def buscar():
+                try:
+                    sid = steamid_local()
+                    lista = biblioteca_publica(sid) if sid else []
+                except Exception:
+                    lista = []
+                self._conta = (time.time(), lista)
+                self._conta_busca = False
+
+            threading.Thread(target=buscar, daemon=True).start()
+        return self._conta[1]
 
     def dll(self):
         d = self.cfg.get("dll", "")
@@ -869,8 +972,19 @@ class Manager:
 
     def lista_instalados(self):
         ind = indice_gabaritos()
-        return [{"appid": g["appid"], "nome": g["nome"], "tem_gabarito": g["appid"] in ind}
+        inst = [{"appid": g["appid"], "nome": g["nome"], "tem_gabarito": g["appid"] in ind, "instalado": True}
                 for g in self.instalados()]
+        vistos = {g["appid"] for g in inst}
+        extra = [{"appid": a, "nome": n, "tem_gabarito": a in ind, "instalado": False}
+                 for a, n in self.biblioteca_conta() if a not in vistos]
+        extra.sort(key=lambda g: g["nome"].lower())
+        return inst + extra
+
+    def buscar(self, body):
+        ind = indice_gabaritos()
+        instalados = {g["appid"] for g in self.instalados()}
+        return [{"appid": g["appid"], "nome": g["nome"], "tem_gabarito": g["appid"] in ind,
+                 "instalado": g["appid"] in instalados} for g in loja_buscar(body.get("q", ""))]
 
     def template(self, appid):
         gab = self.gab(appid)
@@ -1023,15 +1137,18 @@ class Manager:
             raise ApiError(400, "AppID inválido.")
         if isinstance(horas, bool) or not isinstance(horas, (int, float)) or not horas > 0 or horas > 5000:
             raise ApiError(400, "Informe um total de horas maior que zero.")
+        inst = next((g for g in self.instalados() if g["appid"] == appid), None)
+        gp = indice_gabaritos().get(appid)
+        gab = ler_json(gp) if gp else None
+        nome = (inst or {}).get("nome") or (gab or {}).get("nome") or str(body.get("nome") or "").strip()[:120]
+        if not nome and not os.environ.get("CONQUISTAS_FAKE_STEAM"):  # jogo não instalado: pergunta o nome à loja
+            achados = loja_buscar(appid)
+            nome = achados[0]["nome"] if achados else ""
+        if not nome:
+            raise ApiError(404, "Não encontrei esse jogo. Confira o AppID.")
         with self.lock:
             if self.jogo(appid):
                 raise ApiError(409, "Este jogo já está no painel.")
-            inst = next((g for g in self.instalados() if g["appid"] == appid), None)
-            gp = indice_gabaritos().get(appid)
-            gab = ler_json(gp) if gp else None
-            nome = (inst or {}).get("nome") or (gab or {}).get("nome")
-            if not nome:
-                raise ApiError(404, "Jogo não encontrado na sua biblioteca Steam.")
             j = {"appid": appid, "nome": nome, "gabarito": gp or os.path.join(GAB_DIR, f"{appid}.json"),
                  "horas": float(horas)}
             if not gp:  # sem gabarito: gera a partir da Steam
@@ -1067,7 +1184,7 @@ class Manager:
         if not dll_compativel(dll):
             raise ApiError(400, "Essa DLL é de um SDK antigo e não funciona. Use a do Hollow Knight.")
         with self.lock:
-            self.cfg["dll"], self.cfg["sessao"] = dll, float(sess)
+            self.cfg["dll"], self.cfg["sessao"] = self._copiar_dll(dll), float(sess)
             self.salvar()
 
     def parar_todos(self):
@@ -1122,6 +1239,7 @@ ROTAS = [
     ("GET", r"/jogos/([^/]+)/conquistas", lambda m, h, c, b: m.conquistas(c[0])),
     ("GET", r"/jogos/([^/]+)/log", lambda m, h, c, b: m.log_jogo(c[0])),
     ("GET", r"/instalados", lambda m, h, c, b: m.lista_instalados()),
+    ("GET", r"/buscar", lambda m, h, c, b: m.buscar(b)),
     ("GET", r"/gabaritos/([^/]+)", lambda m, h, c, b: m.template(c[0])),
     ("PUT", r"/gabaritos/([^/]+)", lambda m, h, c, b: m.salvar_template(c[0], b)),
     ("GET", r"/config", lambda m, h, c, b: m.config(h)),
@@ -1232,7 +1350,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             achou_caminho = True
             if met != self.command:
                 continue
-            corpo = {}
+            corpo = dict(urllib.parse.parse_qsl(urllib.parse.urlsplit(self.path).query)) if self.command == "GET" else {}
             if self.command in ("POST", "PUT"):
                 try:
                     tam = int(self.headers.get("Content-Length") or 0)
