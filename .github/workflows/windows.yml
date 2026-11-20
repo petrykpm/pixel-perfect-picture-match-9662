@@ -1,0 +1,51 @@
+name: Instalador Windows
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Painel (front)
+        run: |
+          bun install --frozen-lockfile
+          bun run empacotar
+
+      - name: Executável (PyInstaller)
+        working-directory: programa
+        run: |
+          python -m pip install pyinstaller pystray pillow
+          python -m PyInstaller --noconfirm --clean --onedir --noconsole --name GerenciadorConquistas --icon icone.ico --add-data "web;web" --add-data "gabaritos;gabaritos" --add-data "icone.ico;." --hidden-import pystray._win32 --distpath dist --workpath build conquistas_app.py
+
+      - name: Instalador (Inno Setup)
+        working-directory: programa
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          $versao = if ($env:GITHUB_REF_TYPE -eq "tag") { $env:GITHUB_REF_NAME.TrimStart("v") } else { "0.0.$env:GITHUB_RUN_NUMBER" }
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DAppVersion=$versao" instalador.iss
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: instalador-windows
+          path: programa/saida/*.exe
+
+      - name: Publicar na Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: programa/saida/*.exe

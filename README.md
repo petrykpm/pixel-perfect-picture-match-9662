@@ -12,30 +12,37 @@ Tudo roda no seu computador. Nada é enviado para a internet, e o painel só con
 | Programa local | `programa/conquistas_app.py` | Serve o painel e a API (`API.md`), e roda um processo por jogo que desbloqueia as conquistas pela Steam (`steam_api64.dll`). |
 | Gabaritos | `programa/gabaritos/*.json` | Lista de conquistas de cada jogo, na ordem e com o tempo relativo de cada uma. |
 
-## Requisitos
+## Instalar (programa normal do Windows)
 
-- Windows, com **Python 3.10+** instalado.
-- **Steam aberta e logada** com a conta que tem o jogo.
-- O `steam_api64.dll` de um jogo da sua biblioteca, de versão recente (o programa avisa se for antigo).
-- Para gerar o painel a partir do código: [Bun](https://bun.sh) (ou Node 20+).
+A forma mais simples é o instalador, que não precisa de Python nem de terminal:
 
-## Instalação
+1. Baixe o `GerenciadorConquistas-Setup-X.Y.Z.exe` na aba **Releases** do repositório (ou em **Actions → Instalador Windows → Artifacts**).
+2. Execute e siga o assistente. Ele instala só para o seu usuário, sem pedir administrador, e cria o atalho no Menu Iniciar. Atalho na área de trabalho e "Iniciar com o Windows" são opcionais.
+3. Abra o **Gerenciador de Conquistas**. Ele roda em segundo plano, com um ícone perto do relógio ("Abrir painel", "Abrir pasta de dados", "Sair"), e abre o painel em <http://localhost:8765>.
+4. Em **Configurações**, informe o caminho do `steam_api64.dll` e as horas por sessão (`0` = sem limite).
+5. Clique em **Adicionar jogo**, escolha o jogo e o total de horas do plano.
+
+Requisitos: Windows 10/11 e **Steam aberta e logada** com a conta que tem o jogo. O `steam_api64.dll` precisa ser de um jogo da sua biblioteca, de versão recente (o programa avisa se for antigo).
+
+Seus dados (planos, progresso, configurações, gabaritos) ficam em `%APPDATA%\Gerenciador de Conquistas`. Desinstalar não apaga essa pasta. Se você usava a versão antiga em `C:\conquistas`, copie para lá os arquivos `plano_*.json` e `config.json` com o programa fechado.
+
+Você pode fechar o navegador: o programa continua rodando até você escolher **Sair** no ícone da bandeja, que pausa tudo e salva o progresso.
+
+### Gerar o instalador
+
+- **Pelo GitHub (recomendado):** em **Actions → Instalador Windows → Run workflow**, ou crie uma tag (`git tag v1.0.0 && git push --tags`) e o instalador é anexado à Release.
+- **No seu PC:** instale Python 3.10+, [Bun](https://bun.sh) e o [Inno Setup 6](https://jrsoftware.org/isdl.php); rode `bun install && bun run empacotar` e depois `programa\build.bat`. O instalador sai em `programa\saida`.
+
+## Rodar sem instalar (a partir do código)
+
+Precisa de Python 3.10+ e Bun.
 
 ```sh
 bun install
 bun run empacotar   # compila o painel e copia para programa/web
 ```
 
-Depois, na pasta `programa/`:
-
-1. Dê um duplo clique em **`ABRIR.bat`**. O programa roda em segundo plano, sem janela de terminal, e abre o painel em <http://localhost:8765>.
-2. Um ícone aparece perto do relógio, com "Abrir painel" e "Sair".
-3. Em **Configurações**, informe o caminho do `steam_api64.dll` e as horas por sessão (`0` = sem limite).
-4. Clique em **Adicionar jogo**, escolha o jogo e o total de horas do plano.
-
-Você pode fechar o navegador: o programa continua rodando. Para encerrar, use `SAIR.bat` ou "Sair" no ícone. Isso pausa todos os jogos e salva o progresso.
-
-Opcional: `INICIAR-COM-WINDOWS.bat` faz o programa abrir sozinho quando o PC liga. `build.bat` gera um `ConquistasManager.exe`.
+Na pasta `programa/`, dê um duplo clique em `ABRIR.bat` (roda sem janela de terminal; `SAIR.bat` encerra). `INICIAR-COM-WINDOWS.bat` faz abrir sozinho ao ligar o PC.
 
 ## Gabaritos
 
@@ -59,7 +66,7 @@ Um gabarito é um arquivo JSON em `programa/gabaritos/`:
 
 ## Dados e arquivos locais
 
-Ficam ao lado do programa e não vão para o git:
+Na versão instalada ficam em `%APPDATA%\\Gerenciador de Conquistas`; rodando do código, ficam ao lado do programa (e não vão para o git):
 
 - `plano_APPID.json`: plano e progresso de cada jogo.
 - `estado/`: situação atual e log de cada jogo.
@@ -87,4 +94,5 @@ O servidor escuta só em `127.0.0.1`, aceita apenas os hosts `localhost` e `127.
 
 - O fluxo completo foi testado com uma Steam simulada; use por sua conta e risco. Desbloquear conquistas por programa pode ir contra os termos de uso da Steam.
 - A Steam precisa estar aberta e o PC ligado durante a sessão.
+- O instalador e o executável ainda não são assinados digitalmente, então o Windows SmartScreen pode avisar na primeira execução ("Mais informações → Executar assim mesmo").
 - Quando o PC é suspenso, o tempo parado não conta no plano.
