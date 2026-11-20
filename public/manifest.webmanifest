@@ -1,0 +1,22 @@
+{
+  "name": "Gerenciador de Conquistas",
+  "short_name": "Conquistas",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0d11",
+  "theme_color": "#0a0d11",
+  "icons": [
+    {
+      "src": "/icone-256.png?v=3",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg?v=3",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

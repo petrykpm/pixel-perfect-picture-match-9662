@@ -88,7 +88,13 @@ bun run build      # build de produção (usa o programa local, sem mock)
 
 ## Segurança
 
-O servidor escuta só em `127.0.0.1`, aceita apenas os hosts `localhost` e `127.0.0.1`, valida a origem das requisições e exige JSON nos corpos de `POST` e `PUT`.
+- O servidor escuta só em `127.0.0.1` (nunca na rede) e confere o `Host`, o que bloqueia ataques de DNS rebinding.
+- Só o próprio painel (mesma porta) pode usar a API: requisições de outros sites ou de outras portas locais recebem 403. Em desenvolvimento, libere uma origem extra com `CONQUISTAS_ORIGENS=http://localhost:5173`.
+- Os corpos de `POST` e `PUT` precisam ser JSON, com limite de 1 MB, e o `Content-Length` é validado.
+- Os arquivos do painel são servidos só de dentro da pasta `web` (protegido contra `..`), com `X-Frame-Options: DENY`, `nosniff` e `frame-ancestors 'none'`.
+- Os `AppID` são validados como números antes de virarem nomes de arquivo, e o caminho da DLL só é aceito se o arquivo se chamar `steam_api64.dll` e for um SDK compatível.
+- Nada sai do seu computador, exceto as capas dos jogos (CDN da Steam) e as fontes do Google.
+- O instalador roda sem administrador e ainda não é assinado digitalmente.
 
 ## Limites conhecidos
 
