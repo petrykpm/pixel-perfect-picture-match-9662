@@ -27,13 +27,43 @@ import urllib.parse
 import webbrowser
 
 FROZEN = getattr(sys, "frozen", False)
-BASE = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
+APP_DIR = os.path.dirname(sys.executable if FROZEN else os.path.abspath(__file__))
+if os.environ.get("CONQUISTAS_DADOS"):  # usado em testes
+    BASE = os.environ["CONQUISTAS_DADOS"]
+    os.makedirs(BASE, exist_ok=True)
+elif FROZEN and os.name == "nt":
+    # Instalado: os dados do usuário ficam em %APPDATA%, que sempre tem permissão de escrita.
+    BASE = os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~"), "Gerenciador de Conquistas")
+    os.makedirs(BASE, exist_ok=True)
+else:
+    BASE = APP_DIR
 GAB_DIR = os.path.join(BASE, "gabaritos")
 EST_DIR = os.path.join(BASE, "estado")
 CONFIG = os.path.join(BASE, "config.json")
 WEB_DIR = os.path.join(BASE, "web")
 if not os.path.isdir(WEB_DIR) and getattr(sys, "_MEIPASS", None):
     WEB_DIR = os.path.join(sys._MEIPASS, "web")
+
+
+def _semear_gabaritos():
+    """Copia os gabaritos que vêm com o programa para a pasta de dados (sem sobrescrever os do usuário)."""
+    if BASE == APP_DIR:
+        return
+    import shutil
+    for origem in (os.path.join(APP_DIR, "gabaritos"), os.path.join(getattr(sys, "_MEIPASS", APP_DIR), "gabaritos")):
+        if not os.path.isdir(origem):
+            continue
+        os.makedirs(GAB_DIR, exist_ok=True)
+        for nome in os.listdir(origem):
+            destino = os.path.join(GAB_DIR, nome)
+            if nome.endswith(".json") and not os.path.exists(destino):
+                try:
+                    shutil.copy2(os.path.join(origem, nome), destino)
+                except OSError:
+                    pass
+
+
+_semear_gabaritos()
 
 
 def plano_path(appid):
@@ -1257,14 +1287,25 @@ def iniciar_bandeja(url, encerrar):
     try:
         import pystray
         from PIL import Image, ImageDraw
-        img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
-        d = ImageDraw.Draw(img)
-        d.ellipse((4, 4, 60, 60), fill=(0, 200, 220, 255))
-        d.rectangle((22, 18, 42, 34), fill=(10, 20, 30, 255))
-        d.rectangle((29, 34, 35, 46), fill=(10, 20, 30, 255))
-        d.rectangle((22, 46, 42, 50), fill=(10, 20, 30, 255))
+        img = None
+        for pasta in (getattr(sys, "_MEIPASS", ""), APP_DIR):
+            ico = os.path.join(pasta, "icone.ico") if pasta else ""
+            if ico and os.path.isfile(ico):
+                try:
+                    img = Image.open(ico).convert("RGBA")
+                    break
+                except Exception:
+                    img = None
+        if img is None:  # sem o arquivo do ícone: desenha um simples
+            img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+            d = ImageDraw.Draw(img)
+            d.ellipse((4, 4, 60, 60), fill=(0, 200, 220, 255))
+            d.rectangle((22, 18, 42, 34), fill=(10, 20, 30, 255))
+            d.rectangle((29, 34, 35, 46), fill=(10, 20, 30, 255))
+            d.rectangle((22, 46, 42, 50), fill=(10, 20, 30, 255))
         menu = pystray.Menu(
             pystray.MenuItem("Abrir painel", lambda *a: webbrowser.open(url), default=True),
+            pystray.MenuItem("Abrir pasta de dados", lambda *a: os.startfile(BASE) if os.name == "nt" else None),
             pystray.MenuItem("Sair (pausa tudo)", lambda *a: encerrar()),
         )
         icone = pystray.Icon("conquistas", img, "Gerenciador de Conquistas", menu)

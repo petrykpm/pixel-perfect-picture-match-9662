@@ -40,3 +40,4 @@ programa/dist/
 programa/build/
 programa/*.spec
 __pycache__/
+programa/saida/
