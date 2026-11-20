@@ -66,6 +66,52 @@ def _semear_gabaritos():
 _semear_gabaritos()
 
 
+def _migrar_antigo():
+    """Uma vez só: traz o progresso da versão antiga (pasta C:\\conquistas) para a pasta de dados."""
+    if BASE == APP_DIR or os.name != "nt":
+        return
+    marca = os.path.join(BASE, ".migrado")
+    if os.path.exists(marca):
+        return
+    import shutil
+    achou = False
+    for velho in (r"C:\conquistas", os.path.join(os.path.expanduser("~"), "conquistas")):
+        if not os.path.isdir(velho) or os.path.abspath(velho) == os.path.abspath(BASE):
+            continue
+        for nome in os.listdir(velho):
+            origem = os.path.join(velho, nome)
+            destino = os.path.join(BASE, nome)
+            try:
+                if nome.startswith("plano_") and nome.endswith(".json"):
+                    novo = ler_json(destino) if os.path.exists(destino) else None
+                    velho_j = ler_json(origem)
+                    if novo is None or float(velho_j.get("elapsed_s", 0)) > float(novo.get("elapsed_s", 0)):
+                        shutil.copy2(origem, destino)
+                        achou = True
+                elif nome == "config.json":
+                    atual = ler_json(destino) if os.path.exists(destino) else {}
+                    if not atual.get("dll"):
+                        shutil.copy2(origem, destino)
+            except Exception:
+                pass
+        gab_velho = os.path.join(velho, "gabaritos")
+        if os.path.isdir(gab_velho):
+            os.makedirs(GAB_DIR, exist_ok=True)
+            for nome in os.listdir(gab_velho):
+                destino = os.path.join(GAB_DIR, nome)
+                if nome.endswith(".json") and not os.path.exists(destino):
+                    try:
+                        shutil.copy2(os.path.join(gab_velho, nome), destino)
+                    except OSError:
+                        pass
+    try:
+        with open(marca, "w") as f:
+            f.write("ok")
+    except OSError:
+        pass
+    return achou
+
+
 def plano_path(appid):
     return os.path.join(BASE, f"plano_{appid}.json")
 
@@ -1200,6 +1246,23 @@ class Servidor(http.server.ThreadingHTTPServer):
     allow_reuse_address = os.name != "nt"  # no Windows, reuso permitiria dois servidores na mesma porta
 
 
+def abrir_painel(url):
+    """Abre o painel numa janela própria (modo app do Edge/Chrome); se não achar, usa o navegador padrão."""
+    if os.name == "nt":
+        pastas = [os.environ.get("ProgramFiles(x86)", ""), os.environ.get("ProgramFiles", ""), os.environ.get("LOCALAPPDATA", "")]
+        rel = [r"Microsoft\Edge\Application\msedge.exe", r"Google\Chrome\Application\chrome.exe"]
+        for r in rel:
+            for pasta in pastas:
+                exe = os.path.join(pasta, r) if pasta else ""
+                if exe and os.path.isfile(exe):
+                    try:
+                        subprocess.Popen([exe, f"--app={url}", "--window-size=1280,860"], close_fds=True)
+                        return
+                    except OSError:
+                        pass
+    webbrowser.open(url)
+
+
 def outra_instancia(porta):
     try:
         import urllib.request
@@ -1214,6 +1277,7 @@ def run_server(abrir=True, porta_inicial=8765):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
         pass
+    _migrar_antigo()
     mgr = Manager()
     Handler.mgr = mgr
     srv, porta = None, porta_inicial
@@ -1226,7 +1290,7 @@ def run_server(abrir=True, porta_inicial=8765):
                 url = f"http://localhost:{porta}"
                 print(f"O Gerenciador já está aberto em {url}.")
                 if abrir:
-                    webbrowser.open(url)
+                    abrir_painel(url)
                 return
     if srv is None:
         sys.exit("Não consegui abrir nenhuma porta entre %d e %d." % (porta_inicial, porta_inicial + 9))
@@ -1268,7 +1332,7 @@ def run_server(abrir=True, porta_inicial=8765):
     print(" Deixe esta janela aberta. Ctrl+C pausa tudo e fecha.")
     print("=" * 60)
     if abrir:
-        threading.Timer(0.8, lambda: webbrowser.open(url)).start()
+        threading.Timer(0.8, lambda: abrir_painel(url)).start()
     try:
         srv.serve_forever(poll_interval=0.3)
     except KeyboardInterrupt:
@@ -1304,7 +1368,7 @@ def iniciar_bandeja(url, encerrar):
             d.rectangle((29, 34, 35, 46), fill=(10, 20, 30, 255))
             d.rectangle((22, 46, 42, 50), fill=(10, 20, 30, 255))
         menu = pystray.Menu(
-            pystray.MenuItem("Abrir painel", lambda *a: webbrowser.open(url), default=True),
+            pystray.MenuItem("Abrir painel", lambda *a: abrir_painel(url), default=True),
             pystray.MenuItem("Abrir pasta de dados", lambda *a: os.startfile(BASE) if os.name == "nt" else None),
             pystray.MenuItem("Sair (pausa tudo)", lambda *a: encerrar()),
         )

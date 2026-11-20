@@ -18,13 +18,13 @@ A forma mais simples é o instalador, que não precisa de Python nem de terminal
 
 1. Baixe o `GerenciadorConquistas-Setup-X.Y.Z.exe` na aba **Releases** do repositório (ou em **Actions → Instalador Windows → Artifacts**).
 2. Execute e siga o assistente. Ele instala só para o seu usuário, sem pedir administrador, e cria o atalho no Menu Iniciar. Atalho na área de trabalho e "Iniciar com o Windows" são opcionais.
-3. Abra o **Gerenciador de Conquistas**. Ele roda em segundo plano, com um ícone perto do relógio ("Abrir painel", "Abrir pasta de dados", "Sair"), e abre o painel em <http://localhost:8765>.
+3. Abra o **Gerenciador de Conquistas**. O painel abre numa janela própria (usa o Edge ou o Chrome em modo aplicativo, sem abas nem barra de endereço) e o programa roda em segundo plano, com um ícone perto do relógio ("Abrir painel", "Abrir pasta de dados", "Sair"). O endereço continua sendo <http://localhost:8765>.
 4. Em **Configurações**, informe o caminho do `steam_api64.dll` e as horas por sessão (`0` = sem limite).
 5. Clique em **Adicionar jogo**, escolha o jogo e o total de horas do plano.
 
 Requisitos: Windows 10/11 e **Steam aberta e logada** com a conta que tem o jogo. O `steam_api64.dll` precisa ser de um jogo da sua biblioteca, de versão recente (o programa avisa se for antigo).
 
-Seus dados (planos, progresso, configurações, gabaritos) ficam em `%APPDATA%\Gerenciador de Conquistas`. Desinstalar não apaga essa pasta. Se você usava a versão antiga em `C:\conquistas`, copie para lá os arquivos `plano_*.json` e `config.json` com o programa fechado.
+Seus dados (planos, progresso, configurações, gabaritos) ficam em `%APPDATA%\Gerenciador de Conquistas`. Desinstalar não apaga essa pasta. Na primeira execução, o programa importa sozinho o progresso e as configurações da versão antiga em `C:\conquistas` (fica com o plano mais adiantado).
 
 Você pode fechar o navegador: o programa continua rodando até você escolher **Sair** no ícone da bandeja, que pausa tudo e salva o progresso.
 
