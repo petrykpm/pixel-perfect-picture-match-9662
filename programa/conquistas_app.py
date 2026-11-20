@@ -1083,6 +1083,20 @@ class Manager:
 
 ORIGEM_OK = re.compile(r"^http://(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$")
 HOST_OK = re.compile(r"^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$")
+PORTA = [None]  # porta em que o servidor está escutando; só páginas dela podem usar a API
+
+
+def origem_ok(origem):
+    """Aceita só o próprio painel (mesma porta). Para desenvolvimento: CONQUISTAS_ORIGENS="http://localhost:5173"."""
+    m = ORIGEM_OK.match(origem or "")
+    if not m:
+        return False
+    extras = [o.strip() for o in os.environ.get("CONQUISTAS_ORIGENS", "").split(",") if o.strip()]
+    if origem in extras or PORTA[0] is None:
+        return True
+    return (m.group(2) or ":80")[1:] == str(PORTA[0])
+
+
 TIPOS = {".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8",
          ".css": "text/css; charset=utf-8", ".html": "text/html; charset=utf-8",
          ".json": "application/json; charset=utf-8", ".svg": "image/svg+xml", ".ico": "image/x-icon",
@@ -1128,7 +1142,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
     # -- respostas --
     def _cors(self):
         origem = self.headers.get("Origin")
-        if origem and ORIGEM_OK.match(origem):
+        if origem and origem_ok(origem):
             self.send_header("Access-Control-Allow-Origin", origem)
             self.send_header("Vary", "Origin")
             self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
@@ -1142,6 +1156,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(corpo)))
         self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
         self._cors()
         self.end_headers()
         self.wfile.write(corpo)
@@ -1164,6 +1179,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.send_header("Content-Type", TIPOS.get(ext, "application/octet-stream"))
         self.send_header("Content-Length", str(len(dados)))
         self.send_header("Cache-Control", cache)
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Content-Security-Policy", "frame-ancestors 'none'")
+        self.send_header("Referrer-Policy", "no-referrer")
         self.end_headers()
         if self.command != "HEAD":
             self.wfile.write(dados)
@@ -1181,8 +1200,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return
         rel = urllib.parse.unquote(caminho).lstrip("/")
         alvo = os.path.realpath(os.path.join(raiz, rel)) if rel else ""
-        if rel and os.path.commonpath([raiz, alvo]) == raiz and os.path.isfile(alvo) \
-                and os.path.basename(alvo) != "_headers":
+        try:
+            dentro = bool(rel) and os.path.commonpath([raiz, alvo]) == raiz
+        except ValueError:  # outro disco (Windows)
+            dentro = False
+        if dentro and os.path.isfile(alvo) and os.path.basename(alvo) != "_headers":
             cache = "public, max-age=31536000, immutable" if rel.startswith("assets/") else "no-cache"
             return self._arquivo(alvo, cache)
         if rel and os.path.splitext(rel)[1]:  # parece um arquivo que não existe
@@ -1195,7 +1217,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if not HOST_OK.match(host):
             return self._json(403, {"erro": "Host não permitido."})
         origem = self.headers.get("Origin")
-        if origem and not ORIGEM_OK.match(origem):
+        if origem and not origem_ok(origem):
             return self._json(403, {"erro": "Origem não permitida."})
         if self.command == "OPTIONS":
             return self._vazio(204)
@@ -1212,7 +1234,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 continue
             corpo = {}
             if self.command in ("POST", "PUT"):
-                tam = int(self.headers.get("Content-Length") or 0)
+                try:
+                    tam = int(self.headers.get("Content-Length") or 0)
+                except ValueError:
+                    return self._json(400, {"erro": "Content-Length inválido."})
+                if tam < 0:
+                    return self._json(400, {"erro": "Content-Length inválido."})
                 if tam > 1_000_000:
                     return self._json(413, {"erro": "Corpo grande demais."})
                 if tam:
@@ -1288,6 +1315,7 @@ def run_server(abrir=True, porta_inicial=8765):
     for porta in range(porta_inicial, porta_inicial + 10):
         try:
             srv = Servidor(("127.0.0.1", porta), Handler)
+            PORTA[0] = porta
             break
         except OSError:
             if outra_instancia(porta):
