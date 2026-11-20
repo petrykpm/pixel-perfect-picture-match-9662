@@ -37,6 +37,7 @@ programa/config.json
 programa/plano_*.json
 programa/steam_appid.txt
 programa/dist/
+programa/perfil-janela/
 programa/build/
 programa/*.spec
 __pycache__/

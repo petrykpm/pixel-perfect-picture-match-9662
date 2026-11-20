@@ -1087,7 +1087,8 @@ TIPOS = {".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; char
          ".css": "text/css; charset=utf-8", ".html": "text/html; charset=utf-8",
          ".json": "application/json; charset=utf-8", ".svg": "image/svg+xml", ".ico": "image/x-icon",
          ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp", ".woff2": "font/woff2",
-         ".txt": "text/plain; charset=utf-8"}
+         ".txt": "text/plain; charset=utf-8",
+         ".webmanifest": "application/manifest+json; charset=utf-8"}
 
 SAIR_CB = [None]
 
@@ -1256,7 +1257,10 @@ def abrir_painel(url):
                 exe = os.path.join(pasta, r) if pasta else ""
                 if exe and os.path.isfile(exe):
                     try:
-                        subprocess.Popen([exe, f"--app={url}", "--window-size=1280,860"], close_fds=True)
+                        # perfil próprio: sem favoritos, sem ícones antigos guardados e com a janela agrupada à parte
+                        perfil = os.path.join(BASE, "perfil-janela")
+                        subprocess.Popen([exe, f"--app={url}", f"--user-data-dir={perfil}", "--window-size=1280,860",
+                                          "--no-first-run", "--no-default-browser-check"], close_fds=True)
                         return
                     except OSError:
                         pass
